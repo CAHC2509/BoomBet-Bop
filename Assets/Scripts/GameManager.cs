@@ -9,8 +9,6 @@ public class GameManager : MonoBehaviour
 {
     [Header("Match UI settings")]
     [SerializeField]
-    private TMP_InputField betInputField;
-    [SerializeField]
     private TextMeshProUGUI multiplierText;
     [SerializeField]
     private GameObject popUpObject;
@@ -33,13 +31,14 @@ public class GameManager : MonoBehaviour
 
     [Space, Header("Gameplay settings")]
     [SerializeField]
+    private CoinsManager coinsManager;
+    [SerializeField]
     private float bombExplodeChance = 0.5f; // 50% chance of exploding per second
     [SerializeField]
     private float initialDelay = 0.25f; // Initial delay in seconds
 
     private float currentMultiplier = 1.0f;
     private float multiplierIncreaseRate = 0.2f;
-    private int currentBet = 0;
     private bool bombExploded = false;
     private bool canEndRound = true;
 
@@ -48,7 +47,7 @@ public class GameManager : MonoBehaviour
         if (!bombExploded && canEndRound)
         {
             currentMultiplier += multiplierIncreaseRate * Time.deltaTime;
-            multiplierText.text = "Multiplier: x" + currentMultiplier.ToString("F2");
+            multiplierText.text = $"Multiplier: x{currentMultiplier.ToString("F2")}";
 
             if (Random.value < bombExplodeChance * Time.deltaTime)
                 ExplodeBomb();
@@ -65,21 +64,16 @@ public class GameManager : MonoBehaviour
 
         mainButton.onClick.RemoveAllListeners();
 
-        resultText.text = $"BOMB EXPLODED!\nYou lost {currentBet} coins";
+        resultText.text = $"BOMB EXPLODED!\nYou lost {coinsManager.currentBet} coins";
         popUpObject.SetActive(true);
-
-        currentMultiplier = 1.0f; // Reset multiplier
     }
 
     private void PlaceBet()
     {
-        if (int.TryParse(betInputField.text, out currentBet))
-        {
-            canEndRound = true;
-            bombExploded = false;
+        canEndRound = true;
+        bombExploded = false;
 
-            SetMainButtonToStop();
-        }
+        SetMainButtonToStop();
     }
 
     private void EndRound()
@@ -88,14 +82,16 @@ public class GameManager : MonoBehaviour
         {
             mainButton.onClick.RemoveAllListeners();
 
-            int winnings = Mathf.FloorToInt(currentBet * currentMultiplier);
-            resultText.text = "Congratulations!\nYou won " + winnings + " coins!";
+            int winnings = Mathf.FloorToInt(coinsManager.currentBet * currentMultiplier);
+            resultText.text = $"Congratulations!\nYou won {winnings} coins!";
+            coinsManager.HasWonBet(winnings);
             popUpObject.SetActive(true);
             canEndRound = false;
         }
         else
         {
-            resultText.text = "Too late!\nYou lost " + currentBet + " coins.";
+            resultText.text = "Too late!\nYou lost " + coinsManager.currentBet + " coins.";
+            resultText.text = $"Too late!\nYou lost {coinsManager.currentBet} coins.";
         }
     }
 
@@ -108,7 +104,8 @@ public class GameManager : MonoBehaviour
         mainButtonImage.color = greenColor;
         mainButtonText.text = "Start";
 
-        multiplierText.text = "Multiplier: x1.00";
+        currentMultiplier = 1.0f; // Reset multiplier
+        multiplierText.text = $"Multiplier: x{currentMultiplier.ToString("F2")}";
     }
 
     private void SetMainButtonToStop()
