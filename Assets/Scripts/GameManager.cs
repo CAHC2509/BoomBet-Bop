@@ -118,6 +118,12 @@ public class GameManager : MonoBehaviour
         mainButtonText.text = "Stop!";
     }
 
+    public void ResetDefaultGameValues()
+    {
+        PlayerPrefs.DeleteAll(); // Clean PlayerPrefs
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name); // Restart the current scene
+    }
+
     private IEnumerator StartMatchWithDelay()
     {
         yield return new WaitForSeconds(initialDelay);

@@ -11,20 +11,14 @@ public static class PlayerPrefsUtility
         PlayerPrefs.Save();
     }
 
-    public static bool HasLoggedInBefore()
-    {
-        return PlayerPrefs.GetInt(HasLoggedInKey, 0) == 1;
-    }
-
-    public static int GetCoins()
-    {
-        return PlayerPrefs.GetInt(CoinsKey, 0);
-    }
-
     public static void UpdateCoins(int amount)
     {
         int currentCoins = GetCoins();
         int newTotalCoins = currentCoins + amount;
+
+        if (newTotalCoins < 0)
+            newTotalCoins = 0; // Ensure the value is not negative
+
         SaveCoins(newTotalCoins);
     }
 
@@ -33,4 +27,8 @@ public static class PlayerPrefsUtility
         PlayerPrefs.SetInt(CoinsKey, coins);
         PlayerPrefs.Save();
     }
+
+    public static bool HasLoggedInBefore() => PlayerPrefs.GetInt(HasLoggedInKey, 0) == 1;
+
+    public static int GetCoins() => PlayerPrefs.GetInt(CoinsKey, 0);
 }

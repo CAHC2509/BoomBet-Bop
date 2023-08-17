@@ -11,8 +11,13 @@ public class CoinsManager : MonoBehaviour
     [SerializeField]
     private Button confirmButton;
     [SerializeField]
+    private GameObject normalBetPanel;
+    [SerializeField]
+    private GameObject resetGamePanel;
+    [SerializeField]
     private List<TextMeshProUGUI> coinsAmoutTexts;
 
+    [HideInInspector]
     public int currentBet = 0;
 
     private void Start()
@@ -30,7 +35,6 @@ public class CoinsManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(coinsInput.text) || coinsInput.text == "0")
         {
-            currentBet = 0;
             confirmButton.interactable = false;
             return;
         }
@@ -39,7 +43,10 @@ public class CoinsManager : MonoBehaviour
         int desiredBet = int.Parse(coinsInput.text);
 
         if (desiredBet > actualCoins)
+        {
             coinsInput.text = actualCoins.ToString();
+            desiredBet = actualCoins;
+        }
 
         currentBet = desiredBet;
         confirmButton.interactable = true;
@@ -47,8 +54,12 @@ public class CoinsManager : MonoBehaviour
 
     public void BetPlaced()
     {
-        PlayerPrefsUtility.UpdateCoins(-currentBet);
-        UpdateCoinsTexts();
+        if (currentBet > 0)
+        {
+            PlayerPrefsUtility.UpdateCoins(-currentBet);
+            UpdateCoinsTexts();
+            coinsInput.text = string.Empty;
+        }
     }
 
     public void HasWonBet(int winnings)
@@ -64,4 +75,12 @@ public class CoinsManager : MonoBehaviour
         foreach (TextMeshProUGUI textMesh in coinsAmoutTexts)
             textMesh.text = coinsAmount;
     }
+
+    public void CheckForEnoughCoins()
+    {
+        bool hasEnoughCoins = PlayerPrefsUtility.GetCoins() > 0;
+
+        normalBetPanel.SetActive(hasEnoughCoins);
+        resetGamePanel.SetActive(!hasEnoughCoins);
+    } 
 }
