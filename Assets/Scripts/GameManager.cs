@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI multiplierText;
     [SerializeField]
+    private TextMeshProUGUI timerText;
+    [SerializeField]
     private TextMeshProUGUI resultText;
     [SerializeField]
     private GameObject popUpObject;
@@ -57,6 +59,9 @@ public class GameManager : MonoBehaviour
             multiplierText.text = $"Multiplier: x{currentMultiplier.ToString("F2")}";
 
             bombTimer += Time.deltaTime;
+
+            string formattedTime = timeController.FormatTime(bombTimer);
+            timerText.text = formattedTime;
 
             if (bombTimer >= bombDuration)
                 ExplodeBomb();
@@ -131,9 +136,12 @@ public class GameManager : MonoBehaviour
 
     public void ResetMatchValues()
     {
-        bombTimer = 0f;
+        bombTimer = 0f; // Reset timer
+        timerText.text = timeController.FormatTime(bombTimer);
+
         currentMultiplier = 1.0f; // Reset multiplier
         multiplierText.text = $"Multiplier: x{currentMultiplier.ToString("F2")}";
+
         withdrawnText.SetActive(false);
         mainButton.gameObject.SetActive(true);
 

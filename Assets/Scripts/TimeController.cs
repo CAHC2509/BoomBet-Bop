@@ -3,8 +3,17 @@ using UnityEngine;
 
 public class TimeController : MonoBehaviour
 {
+    [Space, Header("Timescale settings")]
     public float timeMultiplier = 3f; // This is the time in seconds to end the match
     private float normalTimeScale = 1f;
+
+    public string FormatTime(float time)
+    {
+        int seconds = Mathf.FloorToInt(time);
+        int milliseconds = Mathf.FloorToInt((time * 1000) % 1000);
+
+        return string.Format("{0:00}:{1:00}", seconds, milliseconds / 10);
+    }
 
     public void IncreaseTimeSpeed(float timeLeft)
     {
