@@ -11,9 +11,11 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI multiplierText;
     [SerializeField]
+    private TextMeshProUGUI resultText;
+    [SerializeField]
     private GameObject popUpObject;
     [SerializeField]
-    private TextMeshProUGUI resultText;
+    private GameObject withdrawnText;
 
     [Space, Header("Main button settings")]
     [SerializeField]
@@ -33,23 +35,28 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private CoinsManager coinsManager;
     [SerializeField]
-    private float bombExplodeChance = 0.5f; // 50% chance of exploding per second
-    [SerializeField]
     private float initialDelay = 0.25f; // Initial delay in seconds
 
-    private float currentMultiplier = 1.0f;
+    private float currentMultiplier = 1f;
     private float multiplierIncreaseRate = 0.2f;
+    private int winnings;
+
+    private float bombDuration = 0f;
+    private float bombTimer = 0f;
+
     private bool bombExploded = false;
-    private bool canEndRound = true;
+    private bool betRemoved = false;
 
     void Update()
     {
-        if (!bombExploded && canEndRound)
+        if (!bombExploded)
         {
             currentMultiplier += multiplierIncreaseRate * Time.deltaTime;
             multiplierText.text = $"Multiplier: x{currentMultiplier.ToString("F2")}";
 
-            if (Random.value < bombExplodeChance * Time.deltaTime)
+            bombTimer += Time.deltaTime;
+
+            if (bombTimer >= bombDuration)
                 ExplodeBomb();
         }
 
@@ -60,39 +67,38 @@ public class GameManager : MonoBehaviour
     private void ExplodeBomb()
     {
         bombExploded = true;
-        canEndRound = false;
-
         mainButton.onClick.RemoveAllListeners();
 
-        resultText.text = $"BOMB EXPLODED!\nYou lost {coinsManager.currentBet} coins";
+        if (!betRemoved)
+        {
+            resultText.text = $"BOMB EXPLODED!\nYou lost {coinsManager.currentBet} coins";
+        }
+        else
+        {
+            resultText.text = $"Congratulations!\nYou won {winnings} coins!";
+            coinsManager.HasWonBet(winnings);
+        }
+
         popUpObject.SetActive(true);
     }
 
     private void PlaceBet()
     {
-        canEndRound = true;
         bombExploded = false;
+        bombDuration = Random.Range(5f, 10f);
+        Debug.Log(bombDuration);
 
         SetMainButtonToStop();
     }
 
-    private void EndRound()
+    private void RemoveBet()
     {
-        if (canEndRound)
-        {
-            mainButton.onClick.RemoveAllListeners();
+        betRemoved = true;
 
-            int winnings = Mathf.FloorToInt(coinsManager.currentBet * currentMultiplier);
-            resultText.text = $"Congratulations!\nYou won {winnings} coins!";
-            coinsManager.HasWonBet(winnings);
-            popUpObject.SetActive(true);
-            canEndRound = false;
-        }
-        else
-        {
-            resultText.text = "Too late!\nYou lost " + coinsManager.currentBet + " coins.";
-            resultText.text = $"Too late!\nYou lost {coinsManager.currentBet} coins.";
-        }
+        mainButton.gameObject.SetActive(!betRemoved);
+        withdrawnText.SetActive(betRemoved);
+
+        winnings = Mathf.FloorToInt(coinsManager.currentBet * currentMultiplier);
     }
 
     public void SetMainButtonToStart()
@@ -103,19 +109,26 @@ public class GameManager : MonoBehaviour
 
         mainButtonImage.color = greenColor;
         mainButtonText.text = "Start";
-
-        currentMultiplier = 1.0f; // Reset multiplier
-        multiplierText.text = $"Multiplier: x{currentMultiplier.ToString("F2")}";
     }
 
     private void SetMainButtonToStop()
     {
         mainButton.onClick.RemoveAllListeners();
-        mainButton.onClick.AddListener(EndRound);
+        mainButton.onClick.AddListener(RemoveBet);
         mainButton.onClick.AddListener(buttonFeedbackEvent.Invoke);
 
         mainButtonImage.color = redColor;
         mainButtonText.text = "Stop!";
+    }
+
+    public void ResetMatchValues()
+    {
+        bombTimer = 0f;
+        currentMultiplier = 1.0f; // Reset multiplier
+        multiplierText.text = $"Multiplier: x{currentMultiplier.ToString("F2")}";
+        mainButton.gameObject.SetActive(true);
+
+        SetMainButtonToStart();
     }
 
     public void ResetDefaultGameValues()
