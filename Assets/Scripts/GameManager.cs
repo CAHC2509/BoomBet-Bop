@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private CoinsManager coinsManager;
     [SerializeField]
+    private TimeController timeController;
+    [SerializeField]
     private float initialDelay = 0.25f; // Initial delay in seconds
 
     private float currentMultiplier = 1f;
@@ -85,7 +87,7 @@ public class GameManager : MonoBehaviour
     private void PlaceBet()
     {
         bombExploded = false;
-        bombDuration = Random.Range(5f, 10f);
+        bombDuration = Random.Range(0f, 60f);
         Debug.Log(bombDuration);
 
         SetMainButtonToStop();
@@ -95,10 +97,16 @@ public class GameManager : MonoBehaviour
     {
         betRemoved = true;
 
+        mainButton.onClick.RemoveAllListeners();
         mainButton.gameObject.SetActive(!betRemoved);
         withdrawnText.SetActive(betRemoved);
 
         winnings = Mathf.FloorToInt(coinsManager.currentBet * currentMultiplier);
+
+        float timeLeft = bombDuration - bombTimer;
+
+        if (timeLeft > timeController.timeMultiplier)
+            timeController.IncreaseTimeSpeed(timeLeft);
     }
 
     public void SetMainButtonToStart()
@@ -126,6 +134,7 @@ public class GameManager : MonoBehaviour
         bombTimer = 0f;
         currentMultiplier = 1.0f; // Reset multiplier
         multiplierText.text = $"Multiplier: x{currentMultiplier.ToString("F2")}";
+        withdrawnText.SetActive(false);
         mainButton.gameObject.SetActive(true);
 
         SetMainButtonToStart();
