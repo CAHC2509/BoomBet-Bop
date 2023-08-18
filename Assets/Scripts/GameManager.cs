@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine;
@@ -55,11 +54,13 @@ public class GameManager : MonoBehaviour
     {
         if (!bombExploded)
         {
+            // Increase the current multiplier over time
             currentMultiplier += multiplierIncreaseRate * Time.deltaTime;
             multiplierText.text = $"Multiplier: x{currentMultiplier.ToString("F2")}";
 
             bombTimer += Time.deltaTime;
 
+            // Update the timer text
             string formattedTime = timeController.FormatTime(bombTimer);
             timerText.text = formattedTime;
 
@@ -67,10 +68,14 @@ public class GameManager : MonoBehaviour
                 ExplodeBomb();
         }
 
+        // Check for Space key during match
         if (Input.GetKeyDown(KeyCode.Space))
             mainButton.onClick.Invoke();
     }
 
+    /// <summary>
+    /// Handles the bomb explosion event.
+    /// </summary>
     private void ExplodeBomb()
     {
         bombExploded = true;
@@ -89,15 +94,21 @@ public class GameManager : MonoBehaviour
         popUpObject.SetActive(true);
     }
 
+    /// <summary>
+    /// Set the initial bet values
+    /// </summary>
     private void PlaceBet()
     {
         bombExploded = false;
-        bombDuration = Random.Range(0f, 60f);
+        bombDuration = Random.Range(0f, 60f); // Choise a random time from 0 to 60 seconds
         Debug.Log(bombDuration);
 
         SetMainButtonToStop();
     }
 
+    /// <summary>
+    /// Remove the bet and increase time speed if needed.
+    /// </summary>
     private void RemoveBet()
     {
         betRemoved = true;
@@ -106,10 +117,12 @@ public class GameManager : MonoBehaviour
         mainButton.gameObject.SetActive(!betRemoved);
         withdrawnText.SetActive(betRemoved);
 
+        // Calculate winnings based on the current bet and multiplier
         winnings = Mathf.FloorToInt(coinsManager.currentBet * currentMultiplier);
 
         float timeLeft = bombDuration - bombTimer;
 
+        // If timeLeft is more than timeMultiplier, increase time speed
         if (timeLeft > timeController.timeMultiplier)
             timeController.IncreaseTimeSpeed(timeLeft);
     }

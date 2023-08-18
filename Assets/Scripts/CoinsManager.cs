@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
@@ -22,6 +21,7 @@ public class CoinsManager : MonoBehaviour
 
     private void Start()
     {
+        // Initialize player's coins if it's their first login
         if (!PlayerPrefsUtility.HasLoggedInBefore())
         {
             PlayerPrefsUtility.UpdateCoins(50);
@@ -31,6 +31,9 @@ public class CoinsManager : MonoBehaviour
         UpdateCoinsTexts();
     }
 
+    /// <summary>
+    /// Check if the entered bet amount is valid based on available coins.
+    /// </summary>
     public void CheckCoinsAvailability()
     {
         if (string.IsNullOrEmpty(coinsInput.text) || coinsInput.text == "0")
@@ -52,6 +55,9 @@ public class CoinsManager : MonoBehaviour
         confirmButton.interactable = true;
     }
 
+    /// <summary>
+    /// Process a placed bet by deducting coins and updating UI.
+    /// </summary>
     public void BetPlaced()
     {
         if (currentBet > 0)
@@ -62,12 +68,18 @@ public class CoinsManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Update player's coins after winning a bet.
+    /// </summary>
     public void HasWonBet(int winnings)
     {
         PlayerPrefsUtility.UpdateCoins(winnings);
         UpdateCoinsTexts();
     }
 
+    /// <summary>
+    /// Update displayed coins amount in various UI elements.
+    /// </summary>
     public void UpdateCoinsTexts()
     {
         string coinsAmount = PlayerPrefsUtility.GetCoins().ToString();
@@ -76,6 +88,9 @@ public class CoinsManager : MonoBehaviour
             textMesh.text = coinsAmount;
     }
 
+    /// <summary>
+    /// Check if the player has enough coins for a bet or should reset the game.
+    /// </summary>
     public void CheckForEnoughCoins()
     {
         bool hasEnoughCoins = PlayerPrefsUtility.GetCoins() > 0;

@@ -7,6 +7,10 @@ public class TimeController : MonoBehaviour
     public float timeMultiplier = 3f; // This is the time in seconds to end the match
     private float normalTimeScale = 1f;
 
+    /// <summary>
+    /// Time formatter for seconds and miliseconds
+    /// </summary>
+    /// <returns>Seconds and miliseconds in format 00:00</returns>
     public string FormatTime(float time)
     {
         int seconds = Mathf.FloorToInt(time);
@@ -15,6 +19,9 @@ public class TimeController : MonoBehaviour
         return string.Format("{0:00}:{1:00}", seconds, milliseconds / 10);
     }
 
+    /// <summary>
+    /// Increase the time scale to make the game faster
+    /// </summary>
     public void IncreaseTimeSpeed(float timeLeft)
     {
         float newSpeed = timeLeft / timeMultiplier;
