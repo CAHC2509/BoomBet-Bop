@@ -42,6 +42,22 @@ public static class PlayerPrefsUtility
     }
 
     /// <summary>
+    /// Set the variable's bool state in PlayerPrefs.
+    /// </summary>
+    /// <param name="state">The bool state to save.</param>
+    public static void SetBoolState(string key, bool state)
+    {
+        PlayerPrefs.SetInt($"{key}_", state ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Get the saved variable's bool state from PlayerPrefs.
+    /// </summary>
+    /// <returns>The saved bool state.</returns>
+    public static bool GetBoolState(string key) => PlayerPrefs.GetInt($"{key}_", 0) == 1;
+
+    /// <summary>
     /// Check if the player has logged in before.
     /// </summary>
     /// <returns>True if the player has logged in before, false otherwise.</returns>

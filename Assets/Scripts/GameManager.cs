@@ -149,6 +149,7 @@ public class GameManager : MonoBehaviour
 
     public void ResetMatchValues()
     {
+        betRemoved = false;
         bombTimer = 0f; // Reset timer
         timerText.text = timeController.FormatTime(bombTimer);
 
