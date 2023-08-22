@@ -32,6 +32,14 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private UnityEvent buttonFeedbackEvent;
 
+    [Space, Header("Final scrren settings")]
+    [SerializeField]
+    private Image bombRenderer;
+    [SerializeField]
+    private Sprite deadBomb;
+    [SerializeField]
+    private Sprite happyBomb;
+
     [Space, Header("Gameplay settings")]
     [SerializeField]
     private CoinsManager coinsManager;
@@ -84,10 +92,12 @@ public class GameManager : MonoBehaviour
         if (!betRemoved)
         {
             resultText.text = $"BOMB EXPLODED!\nYou lost {coinsManager.currentBet} coins";
+            bombRenderer.sprite = deadBomb;
         }
         else
         {
             resultText.text = $"Congratulations!\nYou won {winnings} coins!";
+            bombRenderer.sprite = happyBomb;
             coinsManager.HasWonBet(winnings);
         }
 
