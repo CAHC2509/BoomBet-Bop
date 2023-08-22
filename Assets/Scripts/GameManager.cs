@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     private GameObject popUpObject;
     [SerializeField]
     private GameObject withdrawnText;
+    [SerializeField]
+    private GameObject speedUpPanel;
 
     [Space, Header("Main button settings")]
     [SerializeField]
@@ -29,7 +31,7 @@ public class GameManager : MonoBehaviour
     private Color redColor;
     [SerializeField]
     private Color greenColor;
-    [SerializeField]
+    [Space, SerializeField]
     private UnityEvent buttonFeedbackEvent;
 
     [Space, Header("Final scrren settings")]
@@ -41,6 +43,8 @@ public class GameManager : MonoBehaviour
     private Sprite happyBomb;
 
     [Space, Header("Gameplay settings")]
+    [SerializeField]
+    private Animator bombAnimator;
     [SerializeField]
     private CoinsManager coinsManager;
     [SerializeField]
@@ -89,6 +93,9 @@ public class GameManager : MonoBehaviour
         bombExploded = true;
         mainButton.onClick.RemoveAllListeners();
 
+        speedUpPanel.SetActive(false);
+        bombAnimator.Rebind();
+
         if (!betRemoved)
         {
             resultText.text = $"BOMB EXPLODED!\nYou lost {coinsManager.currentBet} coins";
@@ -111,6 +118,8 @@ public class GameManager : MonoBehaviour
     {
         bombExploded = false;
         bombDuration = Random.Range(0f, 60f); // Choise a random time from 0 to 60 seconds
+        bombAnimator.Play("Bomb Idle");
+
         Debug.Log(bombDuration);
 
         SetMainButtonToStop();
@@ -134,7 +143,10 @@ public class GameManager : MonoBehaviour
 
         // If timeLeft is more than timeMultiplier, increase time speed
         if (timeLeft > timeController.timeMultiplier)
+        {
             timeController.IncreaseTimeSpeed(timeLeft);
+            speedUpPanel.SetActive(true);
+        }
     }
 
     public void SetMainButtonToStart()
@@ -168,6 +180,8 @@ public class GameManager : MonoBehaviour
 
         withdrawnText.SetActive(false);
         mainButton.gameObject.SetActive(true);
+
+        bombAnimator.Rebind();
 
         SetMainButtonToStart();
     }
