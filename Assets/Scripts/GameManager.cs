@@ -14,8 +14,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI resultText;
     [SerializeField]
-    private GameObject popUpObject;
-    [SerializeField]
     private GameObject withdrawnText;
     [SerializeField]
     private GameObject speedUpPanel;
@@ -34,7 +32,9 @@ public class GameManager : MonoBehaviour
     [Space, SerializeField]
     private UnityEvent buttonFeedbackEvent;
 
-    [Space, Header("Final scrren settings")]
+    [Space, Header("End match settings")]
+    [SerializeField]
+    private Animator explossionAnimator;
     [SerializeField]
     private Image bombRenderer;
     [SerializeField]
@@ -94,6 +94,9 @@ public class GameManager : MonoBehaviour
         mainButton.onClick.RemoveAllListeners();
 
         speedUpPanel.SetActive(false);
+        explossionAnimator.gameObject.SetActive(true);
+        explossionAnimator.Play("Explossion");
+
         bombAnimator.Rebind();
 
         if (!betRemoved)
@@ -107,8 +110,6 @@ public class GameManager : MonoBehaviour
             bombRenderer.sprite = happyBomb;
             coinsManager.HasWonBet(winnings);
         }
-
-        popUpObject.SetActive(true);
     }
 
     /// <summary>
@@ -182,6 +183,8 @@ public class GameManager : MonoBehaviour
         mainButton.gameObject.SetActive(true);
 
         bombAnimator.Rebind();
+        explossionAnimator.Rebind();
+        explossionAnimator.gameObject.SetActive(false);
 
         SetMainButtonToStart();
     }
