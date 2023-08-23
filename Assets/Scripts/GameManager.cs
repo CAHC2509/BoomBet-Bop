@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     private GameObject withdrawnText;
     [SerializeField]
     private GameObject speedUpPanel;
+    [SerializeField]
+    private GameObject tutorialPanel;
 
     [Space, Header("Main button settings")]
     [SerializeField]
@@ -61,6 +63,20 @@ public class GameManager : MonoBehaviour
 
     private bool bombExploded = false;
     private bool betRemoved = false;
+
+    private void Start()
+    {
+        // Initialize player's coins if it's their first login
+        if (!PlayerPrefsUtility.HasLoggedInBefore())
+        {
+            PlayerPrefsUtility.UpdateCoins(50);
+            PlayerPrefsUtility.SetHasLoggedIn();
+
+            tutorialPanel.SetActive(true); // Show the tutorial if is first time opnening the game
+        }
+
+        coinsManager.UpdateCoinsTexts();
+    }
 
     void Update()
     {

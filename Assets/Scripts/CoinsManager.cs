@@ -19,18 +19,6 @@ public class CoinsManager : MonoBehaviour
     [HideInInspector]
     public int currentBet = 0;
 
-    private void Start()
-    {
-        // Initialize player's coins if it's their first login
-        if (!PlayerPrefsUtility.HasLoggedInBefore())
-        {
-            PlayerPrefsUtility.UpdateCoins(50);
-            PlayerPrefsUtility.SetHasLoggedIn();
-        }
-
-        UpdateCoinsTexts();
-    }
-
     /// <summary>
     /// Check if the entered bet amount is valid based on available coins.
     /// </summary>
