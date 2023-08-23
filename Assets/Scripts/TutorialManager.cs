@@ -19,6 +19,18 @@ public class TutorialManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Shows the first tutorial scene
+    /// </summary>
+    public void SetInitialScene()
+    {
+        tutorialScenes[currentSceneIndex].SetActive(false);
+        currentSceneIndex = 0;
+        tutorialScenes[currentSceneIndex].SetActive(true);
+
+        UpdateArrowVisibility();
+    }
+
+    /// <summary>
     /// Display the next tutorial scene in the sequence if available.
     /// </summary>
     public void NextScene()
