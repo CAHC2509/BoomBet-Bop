@@ -211,14 +211,6 @@ public class GameManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name); // Restart the current scene
     }
 
-    /// <summary>
-    /// Close the game
-    /// </summary>
-    public void CloseGame()
-    {
-        Application.Quit();
-    }
-
     private IEnumerator StartMatchWithDelay()
     {
         yield return new WaitForSeconds(initialDelay);
