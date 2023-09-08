@@ -211,6 +211,11 @@ public class GameManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name); // Restart the current scene
     }
 
+    public void CloseApplication()
+    {
+        Application.Quit();
+    }
+
     private IEnumerator StartMatchWithDelay()
     {
         yield return new WaitForSeconds(initialDelay);
